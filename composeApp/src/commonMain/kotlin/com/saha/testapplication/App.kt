@@ -1,82 +1,53 @@
 package com.saha.testapplication
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import testapplication.composeapp.generated.resources.Res
-import testapplication.composeapp.generated.resources.crown
-import testapplication.composeapp.generated.resources.hello_world
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.saha.testapplication.navigation.AppRoute
+import com.saha.testapplication.screens.HomeScreen
+import com.saha.testapplication.screens.SecondScreen
+import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
+@Suppress("DEPRECATION")
 @Composable
-fun App(
-    batteryManager: BatteryManager
-) {
-    MaterialTheme {
-        /*var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+fun App() {
+
+    val batteryManager = koinInject<BatteryManager>()
+    KoinContext {
+        MaterialTheme {
+            val navController = rememberNavController()
+            NavHost(
+                navController = navController,
+                startDestination = AppRoute.Home,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                composable(AppRoute.Home) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        HomeScreen(
+                            batteryManager = batteryManager,
+                            onOpenSecond = { navController.navigate(AppRoute.Second) }
+                        )
+                    }
+                }
+                composable(AppRoute.Second) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        SecondScreen(onBack = { navController.popBackStack() })
+                    }
                 }
             }
-        }*/
-
-        Box(
-            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-        ) {
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(Res.string.hello_world)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Battery level is ${batteryManager.getBatteryLevel()}"
-                )
-
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
-
-                Image(
-                    painter = painterResource(Res.drawable.crown),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
-            }
-
         }
     }
 }

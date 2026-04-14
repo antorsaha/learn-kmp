@@ -15,9 +15,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             App(
-                batteryManager = remember{
+                /*batteryManager = remember{
                     BatteryManager(applicationContext)
-                }
+                }*/
             )
         }
     }
